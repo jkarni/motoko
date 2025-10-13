@@ -1,0 +1,7 @@
+builds:
+  exclude: []
+  include:
+    - packages.x86_64-linux.release/moc
+    - packages.x86_64-linux.release/mo-doc
+    - packages.x86_64-linux.js/moc
+    - packages.x86_64-linux.js/moc-interpreter

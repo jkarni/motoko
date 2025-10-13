@@ -173,13 +173,13 @@
         ];
         POCKET_IC_BIN = "${pkgs.pocket-ic.server}/bin/pocket-ic-server";
         SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-        
+
         # Enable tests when building the package.
         doCheck = true;
       };
 
-      tests = import ./nix/tests.nix { 
-        inherit pkgs llvmEnv esm viper-server commonBuildInputs debugMoPackages test-runner; 
+      tests = import ./nix/tests.nix {
+        inherit pkgs llvmEnv esm viper-server commonBuildInputs debugMoPackages test-runner;
       };
 
       filterTests = type:
@@ -241,9 +241,17 @@
 
         inherit rts base-src core-src docs shell;
       };
+      recurseIntoDeepAttrs = attrs:
+         pkgs.lib.recurseIntoAttrs (pkgs.lib.mapAttrs (_: v:
+           if builtins.typeOf v == "set" && !pkgs.lib.isDerivation v
+           then recurseIntoDeepAttrs v
+           else v
+         ) attrs);
+      flatten = x: flake-utils.lib.flattenTree (recurseIntoDeepAttrs x);
     in
     {
-      packages = checks // common-constituents // rec {
+      packages = checks // common-constituents // flatten (rec {
+
         release = buildableReleaseMoPackages;
         debug = buildableDebugMoPackages;
 
@@ -299,7 +307,7 @@
         inherit (debug) moc;
 
         default = release-systems-go;
-      };
+      });
 
       checks = checks // tests;
 
