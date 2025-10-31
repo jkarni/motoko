@@ -5,3 +5,4 @@ builds:
     - packages.x86_64-linux.release/mo-doc
     - packages.x86_64-linux.js/moc
     - packages.x86_64-linux.js/moc-interpreter
+    - packages.x86_64-linux.common-tests
